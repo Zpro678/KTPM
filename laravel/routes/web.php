@@ -1,7 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('auth.login');
+
+Route::post('/login', [AuthController::class,'login'])->name('auth.login');
+
+Route::get('/home', [AuthController::class,'index'])->name('home');
