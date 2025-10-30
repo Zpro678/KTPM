@@ -71,4 +71,36 @@ public function login(Request $request)
             return redirect()->route('login');
         }
     
+     public function showRegister()
+    {
+        return view('auth.register'); 
+    }
+
+    public function register(Request $request)
+    {
+        // Validate
+        $request->validate([
+            'name' => 'required|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => [
+                'required',
+                'min:6',
+                'confirmed',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$/'
+            ]
+        ], [
+            'password.regex' => 'Mật khẩu cần chữ hoa, chữ thường, số và ký tự đặc biệt.'
+        ]);
+
+        // Lưu vào database
+        $client = Client::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password) // không lưu plain text!
+        ]);
+
+
+        // Redirect sau khi đăng ký thành công
+        return redirect()->route('home')->with('success', 'Đăng ký thành công!');
+    }
 }

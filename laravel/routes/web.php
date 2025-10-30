@@ -12,3 +12,7 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('auth.login
 Route::post('/login', [AuthController::class,'login'])->name('auth.login');
 
 Route::get('/home', [AuthController::class,'index'])->name('home');
+
+Route::get('/register', [AuthController::class, 'showRegister'])->name('auth.register.view');
+
+Route::post('/register', [AuthController::class, 'register'])->name('auth.register');
