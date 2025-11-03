@@ -17,9 +17,9 @@ class client extends Authenticatable
     public $timestamps = false;
     protected $fillable = ['name', 'email', 'password', 'is_active'];
 
-    public function GetEmailUser($request)
+    public static function GetEmailUser($request)
     {
-        $data = $this->where('email','=', $request->email)->first();
+        $data = Client::where('email','=', $request->email)->first();
 
         return $data ? $data : null;
     }

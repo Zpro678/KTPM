@@ -31,7 +31,6 @@
           class="container p-4 bg-white col-md-4">
         @csrf
         <h3 class="text-center mb-4 fw-bold text-primary">Đăng nhập</h3>
-
         <!-- EMAIL -->
         <div class="mb-3">
             <label for="email" class="form-label fw-semibold">Email</label>
@@ -65,9 +64,9 @@
                     minlength="6"
                     maxlength="50"
                 >
-                <button type="button" class="btn btn-outline-secondary" id="togglePassword" title="Hiện/Ẩn mật khẩu">
-                    👁
-                </button>
+                <!-- <button type="button" class="btn btn-outline-secondary" id="togglePassword" title="Hiện/Ẩn mật khẩu">
+                    (-)
+                </button> -->
             </div>
             <div id="passwordError" class="text-danger small mt-1"></div>
             @error('password')
@@ -77,6 +76,12 @@
 
         <!-- NÚT ĐĂNG NHẬP -->
         <button type="submit" class="btn btn-primary w-100 fw-semibold">Đăng Nhập</button>
+
+        <div class="text-center mt-3">
+            <a href="{{ route('auth.register') }}" class="btn btn-outline-primary w-100 fw-semibold">
+                Chưa có tài khoản? Đăng ký
+            </a>
+        </div>
 
         <!-- THÔNG BÁO CHUNG (nếu có lỗi đăng nhập) -->
         @if ($errors->has('email'))
