@@ -39,9 +39,9 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'Email không tồn tại.']);
         }
 
-        // if (!Hash::check($request->password, $client->password)) {
-        //     return back()->withErrors(['password' => 'Mật khẩu không đúng.']);
-        // }
+        if (!Hash::check($request->password, $client->password)) {
+            return back()->withErrors(['password' => 'Mật khẩu không đúng.']);
+        } 
 
         if ($client->is_active == 0) {
             return back()->withErrors(['email' => 'Tài khoản chưa được kích hoạt.']);
