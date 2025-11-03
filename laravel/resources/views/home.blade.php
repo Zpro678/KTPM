@@ -42,8 +42,7 @@
           <li class="nav-item"><a href="#" class="nav-link active">Trang Chủ</a></li>
           <li class="nav-item"><a href="#" class="nav-link">Sản Phẩm</a></li>
           <li class="nav-item"><a href="#" class="nav-link">Liên Hệ</a></li>
-          <li class="nav-item"><a href="/login" class="btn btn-warning btn-sm ms-2">Đăng Nhập</a></li>
-          <li class="nav-item"><a href="/register" class="btn btn-warning btn-sm ms-2">Đăng Ký</a></li>
+          <li class="nav-item"><a href="/login" class="btn btn-warning btn-sm ms-2">Đăng Xuất</a></li>
         </ul>
       </div>
     </div>

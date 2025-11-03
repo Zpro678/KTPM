@@ -64,9 +64,9 @@
                     minlength="6"
                     maxlength="50"
                 >
-                <button type="button" class="btn btn-outline-secondary" id="togglePassword" title="Hiện/Ẩn mật khẩu">
-                    👁
-                </button>
+                <!-- <button type="button" class="btn btn-outline-secondary" id="togglePassword" title="Hiện/Ẩn mật khẩu">
+                    (-)
+                </button> -->
             </div>
             <div id="passwordError" class="text-danger small mt-1"></div>
             @error('password')

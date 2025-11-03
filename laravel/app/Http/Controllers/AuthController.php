@@ -22,9 +22,9 @@ class AuthController extends Controller
     }
   
        
-public function login(Request $request)
-{
-    //  Kiểm tra dữ liệu đầu vào
+    public function login(Request $request)
+    {
+         //  Kiểm tra dữ liệu đầu vào
     $request->validate([
         'email' => ['required', 'string'],
         'password' => ['required', 'string'],
@@ -32,37 +32,26 @@ public function login(Request $request)
         'email.required' => 'Vui lòng nhập email.',
         'password.required' => 'Vui lòng nhập mật khẩu.',
     ]);
+       
+        $client = Client::GetEmailUser($request);
+       
+        if (!$client) {
+            return back()->withErrors(['email' => 'Email không tồn tại.']);
+        }
 
-    // Tìm client theo email
-    $client = Client::where('email', $request->email)->first();
+        // if (!Hash::check($request->password, $client->password)) {
+        //     return back()->withErrors(['password' => 'Mật khẩu không đúng.']);
+        // }
 
-    //  Nếu không tìm thấy email
-    if (!$client) {
-        return back()->withErrors([
-            'email' => 'Email không tồn tại trong hệ thống.',
-        ])->withInput();
+        if ($client->is_active == 0) {
+            return back()->withErrors(['email' => 'Tài khoản chưa được kích hoạt.']);
+        }
+
+        // ✅ đăng nhập bằng guard client
+        Auth::guard('client')->login($client);
+
+        return redirect()->intended('/home');
     }
-
-    // 4Kiểm tra mật khẩu (so sánh với hash trong DB)
-    // if (!Hash::check($request->password, $client->password)) {
-    //     return back()->withErrors([
-    //         'password' => 'Mật khẩu không đúng.',
-    //     ])->withInput();
-    // }
-
-    // Kiểm tra trạng thái tài khoản
-    if ($client->is_active == 0) {
-        return back()->withErrors([
-            'email' => 'Tài khoản chưa được kích hoạt.',
-        ])->withInput();
-    }
-
-    // Đăng nhập thủ công (lưu client vào session)
-    Auth::login($client);
-
-    // Chuyển hướng sau khi đăng nhập
-    return redirect()->intended('home');
-}
 
 
         public function logout()
@@ -101,6 +90,6 @@ public function login(Request $request)
 
 
         // Redirect sau khi đăng ký thành công
-        return redirect()->route('home')->with('success', 'Đăng ký thành công!');
+        return redirect()->route('auth.login')->with('success', 'Đăng ký thành công!');
     }
 }
