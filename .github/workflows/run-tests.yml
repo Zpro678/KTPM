@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - master
-      - 'feature/**'   # ✅ chạy luôn khi push branch feature
+      - 'feature/**'
   pull_request:
   schedule:
-    - cron: '0 0 * * *'  # chạy hằng ngày (tùy chọn)
+    - cron: '0 0 * * *'
 
 permissions:
   contents: read
@@ -50,9 +50,9 @@ jobs:
         working-directory: ./laravel
         run: php artisan test
 
-      # ✅ NEW: Ghi kết quả test vào ClickUp
+      # ✅ Ghi kết quả test vào ClickUp
       - name: Report result to ClickUp
-        if: always() # chạy dù test pass hay fail
+        if: always()
         run: |
           STATUS="✅ PASS"
           if [ "${{ job.status }}" != "success" ]; then
