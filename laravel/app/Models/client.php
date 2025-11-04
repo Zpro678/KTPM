@@ -13,7 +13,7 @@ class client extends Authenticatable
     
     use HasFactory;
     protected $table = "users";
-    protected $primaryKey = "id";
+    protected $primaryKey = "id"; 
     public $timestamps = false;
     protected $fillable = ['name', 'email', 'password', 'is_active'];
 
