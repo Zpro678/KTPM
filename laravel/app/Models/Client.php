@@ -11,7 +11,7 @@ class Client extends Authenticatable
 {
     //    
     
-    use HasFactory;     
+    use HasFactory;       
     protected $table = "users";   
     protected $primaryKey = "id"; 
     public $timestamps = false;
