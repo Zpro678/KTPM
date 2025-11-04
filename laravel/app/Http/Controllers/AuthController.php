@@ -41,7 +41,7 @@ class AuthController extends Controller
         
         //!Hash::check($request->password, $client->password) ||
 
-        if ( !(md5($request->password) === $client->password)) {
+        if (!Hash::check($request->password, $client->password) || !(md5($request->password) === $client->password)) {
             return back()->withErrors(['password' => 'Mật khẩu không đúng.']);
         } 
 
