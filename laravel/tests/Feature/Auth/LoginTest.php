@@ -3,7 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use Tests\TestCase;
-use App\Models\client;
+use App\Models\Client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Support\Facades\Hash;  
@@ -14,7 +14,7 @@ class LoginTest extends TestCase
     #[Test]
     public function test_khach_hang_co_the_dang_nhap_voi_thong_tin_dung()
     {
-        $client = client::factory()->create([
+        $client = Client::factory()->create([
             'email' => 'admin2@gmail.com',
             'password' => Hash::make('Admin@1234'),
             'is_active' => 1,
@@ -32,7 +32,7 @@ class LoginTest extends TestCase
     #[Test]
     public function test_khach_hang_khong_the_dang_nhap_voi_mat_khau_sai()
     {
-        $client = client::factory()->create([
+        $client = Client::factory()->create([
             'email' => 'admin2@gmail.com',
             'password' => bcrypt('Admin@1234'),
         ]);

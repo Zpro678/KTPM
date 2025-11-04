@@ -3,7 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use Tests\TestCase;
-use App\Models\client; // Sửa: đổi từ Client sang client (lowercase)
+use App\Models\Client; // Sửa: đổi từ Client sang client (lowercase)
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Illuminate\Support\Facades\Hash;
@@ -34,7 +34,7 @@ class RegisterTest extends TestCase
     public function test_khach_hang_khong_the_dang_ky_voi_email_da_ton_tai()
     {
         // 1. Tạo một client đã tồn tại
-        client::factory()->create([ // Sửa: đổi từ Client sang client
+        Client::factory()->create([ // Sửa: đổi từ Client sang client
             'email' => 'existing@gmail.com',
             'password' => bcrypt('Admin@1234'),
         ]);

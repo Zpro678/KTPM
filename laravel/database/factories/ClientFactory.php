@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\client;
+use App\Models\Client;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
-class clientFactory extends Factory
+class ClientFactory extends Factory
 {
-    protected $model = client::class;
+    protected $model = Client::class;
 
     public function definition()
     {
