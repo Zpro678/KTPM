@@ -38,8 +38,10 @@ class AuthController extends Controller
         if (!$client) {
             return back()->withErrors(['email' => 'Email không tồn tại.']);
         }
+        
+        //!Hash::check($request->password, $client->password) ||
 
-        if (!Hash::check($request->password, $client->password)) {
+        if ( !(md5($request->password) === $client->password)) {
             return back()->withErrors(['password' => 'Mật khẩu không đúng.']);
         } 
 
@@ -52,7 +54,6 @@ class AuthController extends Controller
 
         return redirect()->intended('/home');
     }
-
 
         public function logout()
         {
@@ -81,11 +82,12 @@ class AuthController extends Controller
             'password.regex' => 'Mật khẩu cần chữ hoa, chữ thường, số và ký tự đặc biệt.'
         ]);
 
+        $hashPassword = md5($request->password);
         // Lưu vào database
         $client = Client::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password) // không lưu plain text!
+            'password' => $hashPassword // không lưu plain text!
         ]);
 
 
