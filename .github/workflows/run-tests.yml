@@ -4,11 +4,10 @@ on:
   push:
     branches:
       - master
-      - '*.x'
-      - 'feature/**'   # ✅ thêm: test luôn khi push branch feature
+      - 'feature/**'   # ✅ chạy luôn khi push branch feature
   pull_request:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 0 * * *'  # chạy hằng ngày (tùy chọn)
 
 permissions:
   contents: read
@@ -36,36 +35,35 @@ jobs:
           coverage: none
 
       - name: Install Composer dependencies
+        working-directory: ./laravel
         run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Copy environment file
+        working-directory: ./laravel
         run: cp .env.example .env
 
       - name: Generate app key
+        working-directory: ./laravel
         run: php artisan key:generate
 
       - name: Execute tests
+        working-directory: ./laravel
         run: php artisan test
 
       # ✅ NEW: Ghi kết quả test vào ClickUp
       - name: Report result to ClickUp
         if: always() # chạy dù test pass hay fail
         run: |
-          # Lấy kết quả (success / fail)
           STATUS="✅ PASS"
           if [ "${{ job.status }}" != "success" ]; then
             STATUS="❌ FAIL"
           fi
 
-          # Lấy Task ID từ tên branch (ví dụ: feature/ABC-123-login)
           TASK_ID=$(echo "${{ github.ref_name }}" | grep -oE '[A-Z]+-[0-9]+')
-
-          # Nếu không có Task ID thì ghi tạm là "unknown"
           if [ -z "$TASK_ID" ]; then
             TASK_ID="unknown"
           fi
 
-          # Gửi comment vào ClickUp Task
           MESSAGE="**Regression Test Result** for branch \`${{ github.ref_name }}\`: $STATUS"
 
           curl -X POST "https://api.clickup.com/api/v2/task/$TASK_ID/comment" \
