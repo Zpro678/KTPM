@@ -55,11 +55,20 @@ jobs:
 
       - name: Execute tests
         working-directory: ./laravel
-        run: php artisan test
+        id: run_tests
+        run: |
+          set -e
+          if php artisan test; then
+            echo "RESULT=PASS" >> $GITHUB_ENV
+          else
+            echo "RESULT=FAIL" >> $GITHUB_ENV
+            exit 1
+          fi
 
-       name: Ghi kết quả test vào ClickUp
+      - name: Ghi kết quả test vào ClickUp
         env:
           CLICKUP_TOKEN: ${{ secrets.CLICKUP_TOKEN }}
+          RESULT: ${{ env.RESULT }}
         run: |
           # Lấy branch hiện tại
           BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
@@ -81,8 +90,15 @@ jobs:
 
           echo "✅ Phát hiện Task ID: $TASK_ID"
 
+          # Tạo nội dung comment
+          if [ "$RESULT" = "PASS" ]; then
+            COMMENT_TEXT="✅ CI/CD đã chạy thành công cho branch $BRANCH_NAME. Xem task: https://app.clickup.com/t/$TASK_ID"
+          else
+            COMMENT_TEXT="❌ CI/CD thất bại cho branch $BRANCH_NAME. Xem task: https://app.clickup.com/t/$TASK_ID"
+          fi
+
           # Gửi comment lên ClickUp
           curl -X POST "https://api.clickup.com/api/v2/task/$TASK_ID/comment" \
             -H "Authorization: $CLICKUP_TOKEN" \
             -H "Content-Type: application/json" \
-            -d "{\"comment_text\":\"✅ CI/CD đã chạy xong test cho branch $BRANCH_NAME.\"}"
+            -d "{\"comment_text\":\"$COMMENT_TEXT\"}"
