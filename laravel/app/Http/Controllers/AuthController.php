@@ -41,7 +41,7 @@ class AuthController extends Controller
         
         //!Hash::check($request->password, $client->password) ||
 
-        if (!Hash::check($request->password, $client->password) || !(md5($request->password) === $client->password)) {
+        if ( !Hash::check($request->password, $client->password)) {
             return back()->withErrors(['password' => 'Mật khẩu không đúng.']);
         } 
 
@@ -82,7 +82,7 @@ class AuthController extends Controller
             'password.regex' => 'Mật khẩu cần chữ hoa, chữ thường, số và ký tự đặc biệt.'
         ]);
 
-        $hashPassword = md5($request->password);
+        $hashPassword = Hash::make($request->password);
         // Lưu vào database
         $client = Client::create([
             'name' => $request->name,

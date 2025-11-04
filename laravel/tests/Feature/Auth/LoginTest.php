@@ -16,7 +16,7 @@ class LoginTest extends TestCase
     {
         $client = client::factory()->create([
             'email' => 'admin2@gmail.com',
-            'password' => bcrypt('Admin@1234'),
+            'password' => Hash::make('Admin@1234'),
             'is_active' => 1,
         ]);
 
