@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
 class Client extends Authenticatable
 {
-    //
+    //    
     
     use HasFactory;
     protected $table = "users";
