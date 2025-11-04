@@ -24,3 +24,4 @@ class client extends Authenticatable
         return $data ? $data : null;
     }
 }
+           
