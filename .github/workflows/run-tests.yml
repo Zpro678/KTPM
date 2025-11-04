@@ -50,19 +50,21 @@ jobs:
         working-directory: ./laravel
         run: php artisan test
 
-      # ✅ Ghi kết quả test vào ClickUp
-#!/bin/bash
-BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
-TASK_ID=$(echo "$BRANCH_NAME" | grep -oE '([a-z0-9]{6,10})$')
+      - name: Ghi kết quả test vào ClickUp
+        env:
+          CLICKUP_TOKEN: ${{ secrets.CLICKUP_TOKEN }}
+        run: |
+          BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+          TASK_ID=$(echo "$BRANCH_NAME" | grep -oE '([a-z0-9]{6,10})$')
 
-if [ -z "$TASK_ID" ]; then
-  echo "⚠️ Không tìm thấy ClickUp Task ID trong tên nhánh '$BRANCH_NAME'. Bỏ qua comment."
-  exit 0
-fi
+          if [ -z "$TASK_ID" ]; then
+            echo "⚠️ Không tìm thấy ClickUp Task ID trong tên nhánh '$BRANCH_NAME'. Bỏ qua comment."
+            exit 0
+          fi
 
-echo "✅ Phát hiện Task ID: $TASK_ID"
+          echo "✅ Phát hiện Task ID: $TASK_ID"
 
-curl -X POST "https://api.clickup.com/api/v2/task/$TASK_ID/comment" \
-  -H "Authorization: $CLICKUP_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d "{\"comment_text\":\"✅ CI/CD đã chạy xong test cho branch $BRANCH_NAME.\"}"
+          curl -X POST "https://api.clickup.com/api/v2/task/$TASK_ID/comment" \
+            -H "Authorization: $CLICKUP_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"comment_text\":\"✅ CI/CD đã chạy xong test cho branch $BRANCH_NAME.\"}"
