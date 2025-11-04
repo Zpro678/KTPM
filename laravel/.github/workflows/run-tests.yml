@@ -1,25 +1,74 @@
-name: Laravel Test
+name: Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - master
+      - '*.x'
+      - 'feature/**'   # ✅ thêm: test luôn khi push branch feature
   pull_request:
-    branches: [ "main" ]
+  schedule:
+    - cron: '0 0 * * *'
+
+permissions:
+  contents: read
 
 jobs:
-  test:
+  tests:
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.2, 8.3, 8.4]
+
+    name: PHP ${{ matrix.php }}
+
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.3'
-        extensions: mbstring, bcmath, sqlite
-    - name: Install dependencies
-      run: composer install --no-progress --prefer-dist
-    - name: Copy .env
-      run: cp .env.example .env
-    - name: Run tests
-      run: php artisan test
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Copy environment file
+        run: cp .env.example .env
+
+      - name: Generate app key
+        run: php artisan key:generate
+
+      - name: Execute tests
+        run: php artisan test
+
+      # ✅ NEW: Ghi kết quả test vào ClickUp
+      - name: Report result to ClickUp
+        if: always() # chạy dù test pass hay fail
+        run: |
+          # Lấy kết quả (success / fail)
+          STATUS="✅ PASS"
+          if [ "${{ job.status }}" != "success" ]; then
+            STATUS="❌ FAIL"
+          fi
+
+          # Lấy Task ID từ tên branch (ví dụ: feature/ABC-123-login)
+          TASK_ID=$(echo "${{ github.ref_name }}" | grep -oE '[A-Z]+-[0-9]+')
+
+          # Nếu không có Task ID thì ghi tạm là "unknown"
+          if [ -z "$TASK_ID" ]; then
+            TASK_ID="unknown"
+          fi
+
+          # Gửi comment vào ClickUp Task
+          MESSAGE="**Regression Test Result** for branch \`${{ github.ref_name }}\`: $STATUS"
+
+          curl -X POST "https://api.clickup.com/api/v2/task/$TASK_ID/comment" \
+            -H "Authorization: ${{ secrets.CLICKUP_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"comment_text\": \"$MESSAGE\"}"
