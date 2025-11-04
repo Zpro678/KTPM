@@ -6,7 +6,7 @@ use Tests\TestCase;
 use App\Models\client;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Hash;  
 class LoginTest extends TestCase
 {
     use RefreshDatabase; //tự đạo động làm mới database sau mỗi test
