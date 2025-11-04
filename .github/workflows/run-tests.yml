@@ -51,22 +51,18 @@ jobs:
         run: php artisan test
 
       # ✅ Ghi kết quả test vào ClickUp
-      - name: Report result to ClickUp
-        if: always()
-        run: |
-          STATUS="✅ PASS"
-          if [ "${{ job.status }}" != "success" ]; then
-            STATUS="❌ FAIL"
-          fi
+#!/bin/bash
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+TASK_ID=$(echo "$BRANCH_NAME" | grep -oE '([a-z0-9]{6,10})$')
 
-          TASK_ID=$(echo "${{ github.ref_name }}" | grep -oE '[A-Z]+-[0-9]+')
-          if [ -z "$TASK_ID" ]; then
-            TASK_ID="unknown"
-          fi
+if [ -z "$TASK_ID" ]; then
+  echo "⚠️ Không tìm thấy ClickUp Task ID trong tên nhánh '$BRANCH_NAME'. Bỏ qua comment."
+  exit 0
+fi
 
-          MESSAGE="**Regression Test Result** for branch \`${{ github.ref_name }}\`: $STATUS"
+echo "✅ Phát hiện Task ID: $TASK_ID"
 
-          curl -X POST "https://api.clickup.com/api/v2/task/$TASK_ID/comment" \
-            -H "Authorization: ${{ secrets.CLICKUP_API_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d "{\"comment_text\": \"$MESSAGE\"}"
+curl -X POST "https://api.clickup.com/api/v2/task/$TASK_ID/comment" \
+  -H "Authorization: $CLICKUP_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"comment_text\":\"✅ CI/CD đã chạy xong test cho branch $BRANCH_NAME.\"}"
